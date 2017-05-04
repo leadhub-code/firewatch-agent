@@ -1,8 +1,22 @@
+import re
 from setuptools import setup, find_packages
+
+
+def get_version():
+    with open('firewatch_agent/main.py') as f:
+        for line in f:
+            m = re.match(r'''^version = ['"]([^'"]+)['"]$''', line)
+            if m:
+                return m.group(1)
+    raise Exception('Failed to find version info')
+
+
+version = get_version()
+
 
 setup(
     name='firewatch-agent',
-    version='0.0.1',
+    version=version,
     description='Log monitoring for error and warning messages',
     url='https://github.com/leadhub-code/firewatch-agent',
     author='Petr Messner',

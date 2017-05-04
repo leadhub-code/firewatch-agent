@@ -9,6 +9,8 @@ from .report_listener import ReportWarningListener
 from .collector import Collector
 
 
+version = '0.0.1'
+
 logger = logging.getLogger(__name__)
 
 
@@ -18,6 +20,7 @@ default_state_path = '/var/lib/firewatch-agent/state.yaml'
 
 def agent_main():
     p = argparse.ArgumentParser()
+    p.add_argument('--version', action='version', version='firewatch-agent {}'.format(version))
     p.add_argument('--verbose', '-v', action='count')
     p.add_argument('--id-file', metavar='FILE',
         help='path to file that contains agent id, will be created if not '
