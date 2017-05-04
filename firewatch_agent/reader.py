@@ -5,14 +5,7 @@ import os
 logger = logging.getLogger(__name__)
 
 
-class Reader:
-    '''
-    Reads a log file.
-
-    Can handle log rotation.
-    Works with State store, so when started again on a file that was previously
-    processed it continues from the last position.
-    '''
+class FileReader:
 
     def __init__(self, path, state_store=None):
         self.path = path
@@ -82,3 +75,7 @@ class Reader:
         # f is path or fileno
         st = os.stat(f)
         return (st.st_ino, st.st_dev)
+
+
+# TODO: remove
+Reader = FileReader

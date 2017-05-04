@@ -1,8 +1,3 @@
-'''
-State store is used for keeping track what parts of which log files are
-already processed so we don't process them again when the program is restarted.
-'''
-
 import logging
 import os
 import yaml
@@ -33,9 +28,6 @@ class MemStateStore:
 
 
 class YAMLStateStore:
-    '''
-    Based on YAML files
-    '''
 
     def __init__(self, path):
         self.path = path
@@ -47,7 +39,6 @@ class YAMLStateStore:
         return (st.st_size, st.st_mtime, st.st_ino)
 
     def _load(self):
-        logger.debug('Loading state from %s', self.path)
         try:
             with self.path.open() as f:
                 st = os.stat(f.fileno())

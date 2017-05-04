@@ -1,69 +1,33 @@
-import logging
-from pathlib import Path
-from textwrap import dedent
-import yaml
+from helpers import get_free_tcp_port, write_file
 
+from firewatch_agent.configuration import AgentConfiguration
 from firewatch_agent.agent import Agent
-from firewatch_agent.util import unique
-from firewatch_agent.state_store import MemStateStore
 
 
-logger = logging.getLogger(__name__)
-
-
-class _Listener:
-
-    def __init__(self, events):
-        '''
-        Created via get_test_listener().
-        '''
-        self._events = events
-
-    def log_line(self, log_path, line):
-        self._events.append(('log_line', log_path, line))
-
-    def flush(self):
-        self._events.append('flush')
-
-
-class _CustomList (list):
-
-    def pop_all(self):
-        items = list(self)
-        self.clear()
-        return items
-
-
-def get_test_listener():
-    events = _CustomList()
-    return (_Listener(events), events)
-
-
-def test_one(tmp_dir):
-    conf_file = tmp_dir / 'firewatch-logs.yaml'
-    with conf_file.open('w') as f:
-        f.write(dedent('''
-            firewatch_logs:
-                log_files:
-                    - '*.log'
-        '''))
-    log_file = tmp_dir / 'some.log'
-    with log_file.open('w') as f:
-        f.write('cheese\n')
-        f.write('tomato\n')
-    state_store = MemStateStore()
-    listener, events = get_test_listener()
-    agent = Agent([tmp_dir], state_store, listener)
-    agent.run_iteration()
-    assert events.pop_all() == [
-        ('log_line', str(log_file), b'cheese\n'),
-        ('log_line', str(log_file), b'tomato\n'),
-        'flush',
-    ]
-    with log_file.open('a') as f:
-        f.write('bacon\n')
-    agent.run_iteration()
-    assert events.pop_all() == [
-        ('log_line', str(log_file), b'bacon\n'),
-        'flush',
-    ]
+def test_overall_egent(tmp_dir):
+    hub_port = get_free_tcp_port()
+    agent_conf_path = write_file(tmp_dir / 'agent.yaml', '''
+        firewatch_agent:
+            firewatch_hub_endpoint: http://localhost:5000/firewatch-hub/
+            id_file: agent_id
+            state_file: state.yaml
+            scan_paths: # where to look for files firewatch-logs.yaml
+                - '*/log'
+    ''')
+    logs_conf_path = write_file(tmp_dir / 'some-service/log/firewatch-logs.yaml', '''
+        firewatch_logs:
+            - log_paths:
+                - *.log
+              error_regex: ERR
+              warning_regex: WARN
+              context_before: 10
+              context_after: 10
+              context_timeout: 0
+              thread_regex: null
+    ''')
+    log_path = write_file(tmp_dir / 'some-service/log/some.log', '''
+        cheese
+        WARNING: bacon
+    ''')
+    agent_conf = AgentConfiguration(agent_conf_path)
+    agent = Agent(agent_conf)

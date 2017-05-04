@@ -3,13 +3,11 @@ import logging
 import os
 from pathlib import Path
 from pytest import fixture
-import sys
 
 
 logging.basicConfig(
-    format='~ [%(process)d] %(name)-40s %(levelname)5s: %(message)s',
-    level=logging.DEBUG,
-    stream=sys.stdout)
+    format='~ %(name)-20s %(levelname)5s: %(message)s',
+    level=logging.DEBUG)
 
 
 if os.environ.get('DEBUG_HTTP_CLIENT'):
@@ -44,6 +42,3 @@ class _System:
 
     def utcnow(self):
         return self._now
-
-    def getfqdn(self):
-        return 'server.example.com'

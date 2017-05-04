@@ -1,3 +1,0 @@
-firewatch_logs:
-    log_files:
-        - '*.log'

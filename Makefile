@@ -10,14 +10,3 @@ $(venv_dir)/packages-installed: Makefile requirements-tests.txt setup.py
 	$(venv_dir)/bin/pip install -r requirements-tests.txt
 	$(venv_dir)/bin/pip install -e .
 	touch $@
-
-run-mock-hub: $(venv_dir)/packages-installed
-	$(venv_dir)/bin/python3 ./scripts/mock_hub.py
-
-run-example: $(venv_dir)/packages-installed
-	$(venv_dir)/bin/firewatch-agent \
-		--id-file local/agent_id \
-		--state local/state.yaml \
-		--verbose \
-		--verbose \
-		http://localhost:5000/firewatch-hub/report example

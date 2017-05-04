@@ -1,0 +1,9 @@
+firewatch_logs:
+    - log_paths:
+        - some-service.log
+      error_regex: ERR
+      warning_regex: WARN
+      context_before: 10
+      context_after: 10
+      context_timeout: 1
+      thread_regex: null

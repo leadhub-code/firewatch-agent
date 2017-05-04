@@ -2,39 +2,36 @@ import argparse
 import logging
 from pathlib import Path
 
+from .configuration import AgentConfiguration
 from .agent import Agent
-from .util import System
-from .state_store import YAMLStateStore
-from .report_listener import ReportWarningListener
-from .collector import Collector
 
 
 logger = logging.getLogger(__name__)
 
 
-default_id_path = '/etc/firewatch/agent_id'
-default_state_path = '/var/lib/firewatch-agent/state.yaml'
+default_agent_conf_path = '/etc/firewatch/firewatch-agent.yaml'
 
 
 def agent_main():
     p = argparse.ArgumentParser()
     p.add_argument('--verbose', '-v', action='count')
-    p.add_argument('--id-file', metavar='FILE',
-        help='path to file that contains agent id, will be created if not '
-             'present; default: {}'.format(default_id_path))
-    p.add_argument('--state', metavar='FILE',
-        help='path to state file; default: {}'.format(default_state_path))
-    p.add_argument('report_url')
-    p.add_argument('path',
-        help='path to configuration file, or directory to scan for '
-             'configuration files')
+    p.add_argument('agent_conf',
+        help='path to agent configuration file; default: {}'.format(
+            default_agent_conf_path))
     args = p.parse_args()
     setup_logging(verbosity=args.verbose)
+    agent_conf = AgentConfiguration(Path(args.agent_conf))
+    agent = Agent(agent_conf)
+    agent.run_forever()
+
+
+def xxx():
     id_path = Path(args.id_file or default_id_path)
     agent_id = get_agent_id(id_path)
+    #agent = Agent(agent_id, Path(args.path).resolve())
     system = System()
-    state_store = YAMLStateStore(Path(args.state))
-    report_listener = ReportWarningListener(args.report_url, agent_id, system=system)
+    state_store = YAMLStateStore()
+    report_listener = ReportWarningListener(report_url)
     collector = Collector(report_listener, system=system)
     agent = Agent(
         scan_paths=[Path(args.path).resolve()],

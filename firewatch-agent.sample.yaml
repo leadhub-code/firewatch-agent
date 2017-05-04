@@ -1,0 +1,6 @@
+firewatch_agent:
+    firewatch_hub_endpoint: http://localhost:5000/firewatch-hub/
+    id_file: agent_id
+    state_file: state.yaml
+    scan_paths: # where to look for files firewatch-logs.yaml
+        - /srv/*/log

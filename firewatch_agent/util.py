@@ -1,6 +1,3 @@
-from datetime import datetime
-import socket
-
 
 def unique(items):
     present = set()
@@ -13,12 +10,3 @@ def unique(items):
 
 
 assert unique('abca') == ['a', 'b', 'c']
-
-
-class System:
-
-    def utcnow(self):
-        return datetime.utcnow()
-
-    def getfqdn(self):
-        return socket.getfqdn()

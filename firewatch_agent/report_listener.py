@@ -11,16 +11,11 @@ Event = namedtuple('Event', 'log_path date chunk')
 
 
 class ReportWarningListener:
-    '''
-    Listens for warning events and sends them via HTTP.
-    '''
 
     max_count = 100
 
-    def __init__(self, report_url, agent_id, system, rs=None):
+    def __init__(self, report_url, rs=None):
         self.report_url = report_url
-        self.agent_id = agent_id
-        self.system = system
         self.rs = rs or requests.session()
         self.events_to_report = []
         self.skipped = 0
@@ -41,8 +36,6 @@ class ReportWarningListener:
             self.skipped = 0
         data = {
             'firewatch_report': {
-                'agent_id': self.agent_id,
-                'host': self.system.getfqdn(),
                 'events': [{
                     'date': ev.date.isoformat(),
                     'log_path': ev.log_path,
