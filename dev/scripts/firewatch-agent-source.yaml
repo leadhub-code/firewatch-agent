@@ -1,0 +1,7 @@
+firewatch_agent_source:
+    logs:
+      - directory: .
+        filename: "*.log"
+        error_regex: "ERROR: .*"
+        warning_regex: "WARNING: .*"
+        false_positive_regex: "but it is ok"
