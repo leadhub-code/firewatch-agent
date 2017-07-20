@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class Reader:
 
-    def __init__(self, log_path, log_conf):
+    def __init__(self, log_path, log_conf, system):
         self.log_path = log_path
         self.log_conf = log_conf
         self.stream = log_path.open('rb')
