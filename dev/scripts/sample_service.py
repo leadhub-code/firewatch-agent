@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 default_log_path = 'sample_service.log'
 
-fmt = '%(asctime)s %(levelname)7s: %(message)s'
+fmt = '%(asctime)s [%(process)5d] %(levelname)7s: %(message)s'
 
 
 def main():
