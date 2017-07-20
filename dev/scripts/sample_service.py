@@ -29,7 +29,7 @@ def main():
 
 
 words = '''
-    banana bacon cheese apple orange chocolate beer potato curry
+    banana bacon cheese apple orange chocolate beer potato curry cucumber onion pear
 '''.split()
 
 
